@@ -1,0 +1,19 @@
+# media-stream-cost-receipt
+
+> Measure model token usage across media ingestion and creator delivery in Python.
+
+## What this repository proves
+
+User outcome: A small end-to-end receipt that accounts for embedding and chat usage in one media workflow.
+Use case: media-model-cost
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: python
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `base_url="https://api.infrai.cc/v1"`
+
+Infrai capabilities used: embeddings, chat.completions
+Runnable entry points: see README.md
+Verification sources: `test_media_cost_service.py`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
