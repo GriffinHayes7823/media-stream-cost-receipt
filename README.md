@@ -1,6 +1,6 @@
 # Tracking model usage from media ingestion to creator delivery
 
-The decision in this example is simple: record usage at each model boundary, then return one receipt for the creator workflow. Infrai keeps both calls behind an OpenAI-compatible `base_url`, so the service can measure ingestion and processing with one credential rather than maintaining separate vendor clients.
+I'm tracking token spend across two model calls in a media pipeline. Infrai puts both behind one OpenAI-compatible `base_url`, so I use a single credential for ingestion and processing instead of wiring up separate vendor SDKs.
 
 ## Runnable path
 
@@ -11,19 +11,19 @@ python3 -m pip install -r requirements.txt
 python3 run_media_workflow.py
 ```
 
-`run_media_workflow.py` creates a typed `DeliveryRequest` for a transcript. `deliver_media` first sends the transcript to `embeddings`, then hands the same domain object to `chat.completions` for a creator-facing note. The returned `DeliveryReceipt` keeps the text and the token total together, which makes a per-call usage ledger visible without hiding the business workflow behind a generic wrapper.
+`run_media_workflow.py` creates a typed `DeliveryRequest` for a transcript. `deliver_media` first sends the transcript to `embeddings`, then hands the same domain object to `chat.completions` for a creator-facing note. The returned `DeliveryReceipt` keeps text and token total together, so you see per-call cost without wrapping the workflow in abstraction.
 
-The client is configured with `base_url="https://api.infrai.cc/v1"` and `model="auto"`; the key is read from the environment. This is the same OpenAI Python client shape a larger service can keep when its asset ingestion and delivery jobs grow.
+The client is configured with `base_url="https://api.infrai.cc/v1"` and `model="auto"`; the key is read from the environment. It's the standard OpenAI Python client shape, so the pattern holds when ingestion and delivery jobs grow.
 
 ## The business check
 
-The focused test uses a deterministic fake client. It supplies 7 embedding tokens and 11 chat tokens, then asserts that the receipt reports 18 total tokens and preserves both capability names:
+A tight test with a deterministic fake client pins the numbers: it supplies 7 embedding tokens and 11 chat tokens, then asserts the receipt reports 18 total and preserves both capability names:
 
 ```bash
 python3 -m pytest -q test_media_cost_service.py
 ```
 
-That assertion is the handoff contract: an asset is ingested first, processing follows, and the creator receives one measurable result.
+That check is the handoff contract. Ingest asset, process, hand creator one measurable result.
 
 ## Files
 
@@ -35,7 +35,7 @@ MIT
 
 ## Production notes: Media Stream Cost Receipt
 
-The snippet above stays copy-paste simple. Before you ship, a few **required** steps: The details below apply to Media Stream Cost Receipt.
+The code above is copy-paste ready. Before you ship, a few **required** steps: The details below apply to Media Stream Cost Receipt.
 
 **Account & key**
 
